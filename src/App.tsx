@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Layout, Typography, List, Card } from "antd";
+import { Layout, Typography, List, Card, Space, Switch } from "antd";
 import { TodoItem } from "./components/TodoItem";
 import { TodoForm } from "./components/TodoForm";
 
@@ -13,10 +13,15 @@ type Todo = {
 };
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>(() => {
-    const saved = localStorage.getItem("todos");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [hideCompleted, setHideCompleted] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("todos");
+    if (stored) {
+      setTodos(JSON.parse(stored));
+    }
+  }, []);
 
   const toggleTodo = (id: number) => {
     setTodos((prev) =>
@@ -25,6 +30,10 @@ function App() {
       )
     );
   };
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   const addTodo = (title: string) => {
     const newTodo = {
@@ -38,10 +47,9 @@ function App() {
   const deleteTodo = (id: number) => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
   };
-
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
+  const filteredTodos = hideCompleted
+    ? todos.filter((todo) => !todo.completed)
+    : todos;
 
   return (
     <>
@@ -59,9 +67,20 @@ function App() {
           }}
         >
           <TodoForm onAdd={addTodo} />
+
+          <div style={{ marginTop: "20px" }}>
+            <Space>
+              <Switch
+                checked={hideCompleted}
+                onChange={(checked) => setHideCompleted(checked)}
+              />
+              <span>完了したタスクを非表示</span>
+            </Space>
+          </div>
+
           <div style={{ width: "100%", maxWidth: "600px", marginTop: "20px" }}>
             <List
-              dataSource={todos}
+              dataSource={filteredTodos}
               locale={{ emptyText: "TODO がありません。" }}
               renderItem={(todo) => (
                 <List.Item>
