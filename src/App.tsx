@@ -53,49 +53,58 @@ function App() {
 
   return (
     <>
-      <Layout style={{ minHeight: "100vh", padding: "20px" }}>
-        <Header style={{ background: "transparent", textAlign: "center" }}>
-          <Title style={{ color: "#000", margin: 0 }}>My TODO List</Title>
-        </Header>
+      <Layout
+        style={{
+          minHeight: "100vh",
+          padding: "20px",
+        }}
+      >
+        <div style={{ width: "100%", maxWidth: "800px", padding: "0 32px" }}>
+          <Header style={{ background: "transparent", textAlign: "center" }}>
+            <Title style={{ color: "#000", margin: 0 }}>My TODO List</Title>
+          </Header>
 
-        <Content
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: "20px",
-          }}
-        >
-          <TodoForm onAdd={addTodo} />
+          <Content
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "20px",
+            }}
+          >
+            <TodoForm onAdd={addTodo} />
 
-          <div style={{ marginTop: "20px" }}>
-            <Space>
-              <Switch
-                checked={hideCompleted}
-                onChange={(checked) => setHideCompleted(checked)}
+            <div style={{ marginTop: "20px" }}>
+              <Space>
+                <Switch
+                  checked={hideCompleted}
+                  onChange={(checked) => setHideCompleted(checked)}
+                />
+                <span>完了したタスクを非表示</span>
+              </Space>
+            </div>
+
+            <div
+              style={{ width: "100%", maxWidth: "600px", marginTop: "20px" }}
+            >
+              <List
+                dataSource={filteredTodos}
+                locale={{ emptyText: "TODO がありません。" }}
+                renderItem={(todo) => (
+                  <List.Item>
+                    <Card style={{ width: "100%" }}>
+                      <TodoItem
+                        {...todo}
+                        onToggle={toggleTodo}
+                        onDelete={deleteTodo}
+                      />
+                    </Card>
+                  </List.Item>
+                )}
               />
-              <span>完了したタスクを非表示</span>
-            </Space>
-          </div>
-
-          <div style={{ width: "100%", maxWidth: "600px", marginTop: "20px" }}>
-            <List
-              dataSource={filteredTodos}
-              locale={{ emptyText: "TODO がありません。" }}
-              renderItem={(todo) => (
-                <List.Item>
-                  <Card style={{ width: "100%" }}>
-                    <TodoItem
-                      {...todo}
-                      onToggle={toggleTodo}
-                      onDelete={deleteTodo}
-                    />
-                  </Card>
-                </List.Item>
-              )}
-            />
-          </div>
-        </Content>
+            </div>
+          </Content>
+        </div>
       </Layout>
     </>
   );
